@@ -90,21 +90,104 @@ class _TopTabSwitcher extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final double totalWidth = MediaQuery.of(context).size.width * 0.67;
+    final double pillWidth = totalWidth / 2;
+
     return Padding(
-      padding: const EdgeInsets.all(12),
-      child: SegmentedButton<HomeTab>(
-        segments: const [
-          ButtonSegment(value: HomeTab.users, label: Text('Users'), icon: null),
-          ButtonSegment(
-            value: HomeTab.chatHistory,
-            label: Text('Chat History'),
-            icon: null,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Center(
+        child: Container(
+          width: totalWidth,
+          height: 44,
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF3F4F6),
+            borderRadius: BorderRadius.circular(24),
           ),
-        ],
-        selected: {tab},
-        onSelectionChanged: (value) {
-          ref.read(homeTabProvider.notifier).state = value.first;
-        },
+          child: Stack(
+            children: [
+              /// Sliding white pill
+              AnimatedAlign(
+                duration: const Duration(milliseconds: 260),
+                curve: Curves.easeOutCubic,
+                alignment:
+                    tab == HomeTab.users
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
+                child: Container(
+                  width: pillWidth,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              /// Labels
+              Row(
+                children: [
+                  _TabLabel(
+                    label: 'Users',
+                    selected: tab == HomeTab.users,
+                    onTap: () {
+                      ref.read(homeTabProvider.notifier).state = HomeTab.users;
+                    },
+                  ),
+                  _TabLabel(
+                    label: 'Chat History',
+                    selected: tab == HomeTab.chatHistory,
+                    onTap: () {
+                      ref.read(homeTabProvider.notifier).state =
+                          HomeTab.chatHistory;
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TabLabel extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _TabLabel({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Center(
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              color: selected ? Colors.black : Colors.grey.shade600,
+            ),
+            child: Text(label),
+          ),
+        ),
       ),
     );
   }
