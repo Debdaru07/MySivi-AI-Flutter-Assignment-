@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../core/widgets/custom_bottom_nav.dart';
 import '../../offers/ui/offers_screen.dart';
 import '../../settings/ui/settings_screen.dart';
 import '../../users/state/users_provider.dart';
-import '../state/appbar_visibility_provider.dart';
 import '../state/home_tab_provider.dart';
 import '../models/home_tab.dart';
 import '../../users/ui/users_list_page.dart';
@@ -67,7 +67,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     context,
                   ).showSnackBar(const SnackBar(content: Text('User added')));
                 },
-                child: const Icon(Icons.add),
+                child: Icon(PhosphorIcons.plus()),
               )
               : null,
 

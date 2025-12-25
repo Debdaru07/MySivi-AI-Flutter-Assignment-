@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../users/models/user_model.dart';
 import '../state/chat_provider.dart';
 import 'message_bubble.dart';
@@ -31,7 +32,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final messages = ref.watch(chatProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.user.name)),
+      appBar: AppBar(
+        title: Text(widget.user.name),
+        leading: IconButton(
+          icon: Icon(PhosphorIcons.caretLeft()),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -66,7 +73,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.send),
+                  icon: Icon(PhosphorIcons.paperPlaneTilt()),
                   onPressed: () async {
                     final text = _textController.text.trim();
                     if (text.isEmpty) return;

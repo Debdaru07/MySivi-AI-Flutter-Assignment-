@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/app_colors.dart';
 
@@ -16,9 +17,11 @@ class AppTheme {
       foregroundColor: AppColors.textPrimary,
       centerTitle: true,
     ),
-    textTheme: const TextTheme(
-      bodyMedium: TextStyle(color: AppColors.textPrimary, fontSize: 14),
-      bodySmall: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+    textTheme: GoogleFonts.interTextTheme(
+      const TextTheme(
+        bodyMedium: TextStyle(color: AppColors.textPrimary, fontSize: 14),
+        bodySmall: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+      ),
     ),
   );
 }
