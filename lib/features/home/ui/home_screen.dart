@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../users/state/users_provider.dart';
+import '../state/appbar_visibility_provider.dart';
 import '../state/home_tab_provider.dart';
 import '../models/home_tab.dart';
 import '../../users/ui/users_list_page.dart';
@@ -13,12 +15,18 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tab = ref.watch(homeTabProvider);
+    final isVisible = ref.watch(appBarVisibleProvider);
+    final users = ref.watch(usersProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Mini Chat'), centerTitle: true),
       body: Column(
         children: [
-          _TopTabSwitcher(tab: tab),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: isVisible ? 56 : 0,
+            child: isVisible ? _TopTabSwitcher(tab: tab) : null,
+          ),
           Expanded(
             child:
                 tab == HomeTab.users
@@ -27,6 +35,22 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
+      floatingActionButton:
+          tab == HomeTab.users
+              ? FloatingActionButton(
+                onPressed: () {
+                  ref
+                      .read(usersProvider.notifier)
+                      .addUser('User ${users.length + 1}');
+
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('User added')));
+                },
+                child: const Icon(Icons.add),
+              )
+              : null,
+
       bottomNavigationBar: const _BottomNav(),
     );
   }

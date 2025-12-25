@@ -62,9 +62,12 @@ class ChatScreen extends ConsumerWidget {
                 IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: () {
+                    if (controller.text.trim().isEmpty) return;
+
                     ref
                         .read(chatProvider.notifier)
-                        .sendMessage(controller.text);
+                        .sendMessage(user, controller.text);
+
                     controller.clear();
                   },
                 ),

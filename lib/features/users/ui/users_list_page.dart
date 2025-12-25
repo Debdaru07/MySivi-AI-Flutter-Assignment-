@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../home/state/appbar_visibility_provider.dart';
 import '../state/users_provider.dart';
 import '../../../core/widgets/avatar_initial.dart';
 import '../../chat/ui/chat_screen.dart';
@@ -13,6 +15,31 @@ class UsersListPage extends ConsumerStatefulWidget {
 
 class _UsersListPageState extends ConsumerState<UsersListPage>
     with AutomaticKeepAliveClientMixin {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final notifier = ref.read(appBarVisibleProvider.notifier);
+
+    if (_controller.position.userScrollDirection == ScrollDirection.reverse) {
+      notifier.state = false;
+    } else if (_controller.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      notifier.state = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   bool get wantKeepAlive => true;
 
@@ -38,15 +65,6 @@ class _UsersListPageState extends ConsumerState<UsersListPage>
                 ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ref.read(usersProvider.notifier).addUser('User ${users.length + 1}');
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('User added')));
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }
