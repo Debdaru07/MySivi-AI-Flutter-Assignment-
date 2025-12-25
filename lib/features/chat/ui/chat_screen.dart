@@ -35,14 +35,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.only(top: 12),
-              itemCount: messages.length,
-              itemBuilder: (_, i) {
-                return MessageBubble(message: messages[i]);
-              },
-            ),
+            child:
+                messages.isEmpty
+                    ? const Center(
+                      child: Text(
+                        'Start the conversation 👋',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                    : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.only(top: 12),
+                      itemCount: messages.length,
+                      itemBuilder: (_, i) {
+                        return MessageBubble(message: messages[i]);
+                      },
+                    ),
           ),
           Padding(
             padding: const EdgeInsets.all(8),

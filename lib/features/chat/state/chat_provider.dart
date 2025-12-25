@@ -23,10 +23,21 @@ class ChatNotifier extends StateNotifier<List<MessageModel>> {
       ),
     ];
 
+    final loadingMessage = MessageModel(
+      text: 'Typing...',
+      type: MessageType.receiver,
+      timestamp: DateTime.now(),
+      user: user,
+      status: MessageStatus.loading,
+    );
+
+    state = [...state, loadingMessage];
+
     try {
       final reply = await api.fetchMessage();
+
       state = [
-        ...state,
+        ...state.where((m) => m != loadingMessage),
         MessageModel(
           text: reply,
           type: MessageType.receiver,
@@ -36,12 +47,13 @@ class ChatNotifier extends StateNotifier<List<MessageModel>> {
       ];
     } catch (_) {
       state = [
-        ...state,
+        ...state.where((m) => m != loadingMessage),
         MessageModel(
-          text: 'Failed to load message',
+          text: 'Failed to fetch message',
           type: MessageType.receiver,
           timestamp: DateTime.now(),
           user: user,
+          status: MessageStatus.error,
         ),
       ];
     }

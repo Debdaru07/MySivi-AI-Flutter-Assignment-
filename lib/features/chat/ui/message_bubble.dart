@@ -47,10 +47,7 @@ class MessageBubble extends StatelessWidget {
                           : const Radius.circular(16),
                 ),
               ),
-              child: Text(
-                message.text,
-                style: TextStyle(color: textColor, height: 1.4),
-              ),
+              child: _buildMessageContent(textColor),
             ),
           ),
 
@@ -61,5 +58,28 @@ class MessageBubble extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildMessageContent(Color textColor) {
+    switch (message.status) {
+      case MessageStatus.loading:
+        return const SizedBox(
+          height: 16,
+          width: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        );
+
+      case MessageStatus.error:
+        return Text(
+          message.text,
+          style: TextStyle(color: textColor, fontStyle: FontStyle.italic),
+        );
+
+      case MessageStatus.normal:
+        return Text(
+          message.text,
+          style: TextStyle(color: textColor, height: 1.4),
+        );
+    }
   }
 }
