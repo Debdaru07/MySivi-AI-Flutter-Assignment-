@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../home/state/appbar_visibility_provider.dart';
 import '../state/users_provider.dart';
 import '../../../core/widgets/avatar_initial.dart';
@@ -55,14 +56,43 @@ class _UsersListPageState extends ConsumerState<UsersListPage>
         itemBuilder: (_, i) {
           final user = users[i];
           return ListTile(
-            leading: AvatarInitial(name: user.name),
-            title: Text(user.name),
-            onTap:
-                () => Navigator.pushNamed(
-                  context,
-                  ChatScreen.routeName,
-                  arguments: {'user': user},
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 6,
+            ),
+            leading: Stack(
+              children: [
+                AvatarInitial(name: user.name, radius: 22),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: AppColors.onlineGreen,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                  ),
                 ),
+              ],
+            ),
+            title: Text(
+              user.name,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: const Text(
+              'Online',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                ChatScreen.routeName,
+                arguments: {'user': user},
+              );
+            },
           );
         },
       ),

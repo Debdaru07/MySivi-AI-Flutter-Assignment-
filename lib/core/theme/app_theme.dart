@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 
-class AppTheme {
-  AppTheme._();
+import '../constants/app_colors.dart';
 
+class AppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
-    colorSchemeSeed: Colors.blue,
-    scaffoldBackgroundColor: const Color(0xFFF8F9FB),
+    scaffoldBackgroundColor: AppColors.background,
+    colorScheme: ColorScheme.light(
+      primary: AppColors.primary,
+      surface: AppColors.surface,
+    ),
     appBarTheme: const AppBarTheme(
-      centerTitle: true,
       elevation: 0,
       backgroundColor: Colors.white,
+      foregroundColor: AppColors.textPrimary,
+      centerTitle: true,
+    ),
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: AppColors.textPrimary, fontSize: 14),
+      bodySmall: TextStyle(color: AppColors.textSecondary, fontSize: 12),
     ),
   );
 }

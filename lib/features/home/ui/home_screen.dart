@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/widgets/custom_bottom_nav.dart';
+import '../../offers/ui/offers_screen.dart';
+import '../../settings/ui/settings_screen.dart';
 import '../../users/state/users_provider.dart';
 import '../state/appbar_visibility_provider.dart';
 import '../state/home_tab_provider.dart';
@@ -7,34 +10,51 @@ import '../models/home_tab.dart';
 import '../../users/ui/users_list_page.dart';
 import '../../chat_history/ui/chat_history_page.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   static const routeName = '/';
 
   const HomeScreen({super.key});
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int _selectedIndex = 0;
+
+  Widget _buildBody() {
+    switch (_selectedIndex) {
+      case 0:
+        return Column(
+          children: [
+            _TopTabSwitcher(tab: ref.watch(homeTabProvider)),
+            Expanded(
+              child:
+                  ref.watch(homeTabProvider) == HomeTab.users
+                      ? const UsersListPage()
+                      : const ChatHistoryPage(),
+            ),
+          ],
+        );
+
+      case 1:
+        return const OffersScreen();
+
+      case 2:
+        return const SettingsScreen();
+
+      default:
+        return const SizedBox();
+    }
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final tab = ref.watch(homeTabProvider);
-    final isVisible = ref.watch(appBarVisibleProvider);
     final users = ref.watch(usersProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Mini Chat'), centerTitle: true),
-      body: Column(
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            height: isVisible ? 56 : 0,
-            child: isVisible ? _TopTabSwitcher(tab: tab) : null,
-          ),
-          Expanded(
-            child:
-                tab == HomeTab.users
-                    ? const UsersListPage()
-                    : const ChatHistoryPage(),
-          ),
-        ],
-      ),
+      body: _buildBody(),
       floatingActionButton:
           tab == HomeTab.users
               ? FloatingActionButton(
@@ -51,7 +71,14 @@ class HomeScreen extends ConsumerWidget {
               )
               : null,
 
-      bottomNavigationBar: const _BottomNav(),
+      bottomNavigationBar: CustomBottomNav(
+        selectedIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
     );
   }
 }
@@ -67,10 +94,11 @@ class _TopTabSwitcher extends ConsumerWidget {
       padding: const EdgeInsets.all(12),
       child: SegmentedButton<HomeTab>(
         segments: const [
-          ButtonSegment(value: HomeTab.users, label: Text('Users')),
+          ButtonSegment(value: HomeTab.users, label: Text('Users'), icon: null),
           ButtonSegment(
             value: HomeTab.chatHistory,
             label: Text('Chat History'),
+            icon: null,
           ),
         ],
         selected: {tab},
@@ -78,37 +106,6 @@ class _TopTabSwitcher extends ConsumerWidget {
           ref.read(homeTabProvider.notifier).state = value.first;
         },
       ),
-    );
-  }
-}
-
-class _BottomNav extends ConsumerWidget {
-  const _BottomNav();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return NavigationBar(
-      selectedIndex: 0,
-      onDestinationSelected: (_) {
-        // Intentionally left empty (only Home is functional)
-      },
-      destinations: const [
-        NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.search_outlined),
-          selectedIcon: Icon(Icons.search),
-          label: 'Explore',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.person_outline),
-          selectedIcon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-      ],
     );
   }
 }

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_utils.dart';
-import '../../../core/widgets/avatar_initial.dart';
-import '../../chat/ui/chat_screen.dart';
 import '../../home/state/appbar_visibility_provider.dart';
 import '../state/chat_history_provider.dart';
 
@@ -62,24 +61,52 @@ class _ChatHistoryPageState extends ConsumerState<ChatHistoryPage>
         final chat = history[i];
 
         return ListTile(
-          leading: AvatarInitial(name: chat.user.name),
-          title: Text(chat.user.name),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          leading: CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.green.shade400,
+            child: Text(
+              chat.user.initial,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          title: Text(
+            chat.user.name,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
           subtitle: Text(
             chat.lastMessage,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
-          trailing: Text(
-            DateUtilsHelper.formatRelative(chat.time),
-            style: Theme.of(context).textTheme.bodySmall,
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                DateUtilsHelper.formatRelative(chat.time),
+                style: const TextStyle(fontSize: 12),
+              ),
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Text(
+                  '2',
+                  style: TextStyle(color: Colors.white, fontSize: 10),
+                ),
+              ),
+            ],
           ),
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              ChatScreen.routeName,
-              arguments: {'user': chat.user},
-            );
-          },
         );
       },
     );

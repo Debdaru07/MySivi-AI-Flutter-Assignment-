@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/date_utils.dart';
 import '../../../core/widgets/avatar_initial.dart';
 import '../models/message_model.dart';
 
@@ -11,7 +13,8 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bubbleColor = isSender ? Colors.blue : Colors.grey.shade300;
+    final bubbleColor =
+        isSender ? AppColors.bubbleSender : AppColors.bubbleReceiver;
     final textColor = isSender ? Colors.white : Colors.black87;
 
     return Padding(
@@ -47,7 +50,20 @@ class MessageBubble extends StatelessWidget {
                           : const Radius.circular(16),
                 ),
               ),
-              child: _buildMessageContent(textColor),
+              child: Column(
+                crossAxisAlignment:
+                    isSender
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
+                children: [
+                  _buildMessageContent(textColor),
+                  const SizedBox(height: 4),
+                  Text(
+                    DateUtilsHelper.formatTime(message.timestamp),
+                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
           ),
 
