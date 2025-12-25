@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../users/models/user_model.dart';
 import '../state/chat_provider.dart';
-import '../models/message_model.dart';
+import 'message_bubble.dart';
 
-class ChatScreen extends ConsumerWidget {
+class ChatScreen extends ConsumerStatefulWidget {
   static const routeName = '/chat';
 
   final UserModel user;
@@ -12,45 +12,35 @@ class ChatScreen extends ConsumerWidget {
   const ChatScreen({super.key, required this.user});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends ConsumerState<ChatScreen> {
+  final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final messages = ref.watch(chatProvider);
-    final controller = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: Text(user.name)),
+      appBar: AppBar(title: Text(widget.user.name)),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.only(top: 12),
               itemCount: messages.length,
               itemBuilder: (_, i) {
-                final msg = messages[i];
-                return Align(
-                  alignment:
-                      msg.type == MessageType.sender
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.all(8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color:
-                          msg.type == MessageType.sender
-                              ? Colors.blue
-                              : Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      msg.text,
-                      style: TextStyle(
-                        color:
-                            msg.type == MessageType.sender
-                                ? Colors.white
-                                : Colors.black,
-                      ),
-                    ),
-                  ),
-                );
+                return MessageBubble(message: messages[i]);
               },
             ),
           ),
@@ -58,17 +48,34 @@ class ChatScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                Expanded(child: TextField(controller: controller)),
+                Expanded(
+                  child: TextField(
+                    controller: _textController,
+                    decoration: const InputDecoration(
+                      hintText: 'Type a message',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
                 IconButton(
                   icon: const Icon(Icons.send),
-                  onPressed: () {
-                    if (controller.text.trim().isEmpty) return;
+                  onPressed: () async {
+                    final text = _textController.text.trim();
+                    if (text.isEmpty) return;
 
-                    ref
+                    await ref
                         .read(chatProvider.notifier)
-                        .sendMessage(user, controller.text);
+                        .sendMessage(widget.user, text);
 
-                    controller.clear();
+                    _textController.clear();
+
+                    // ✅ Auto-scroll after rebuild
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!_scrollController.hasClients) return;
+                      _scrollController.jumpTo(
+                        _scrollController.position.maxScrollExtent,
+                      );
+                    });
                   },
                 ),
               ],
