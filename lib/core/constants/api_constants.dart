@@ -10,4 +10,7 @@ class ApiConstants {
   static const String randomQuote = 'https://api.quotable.io/random';
 
   static const String boredApi = 'https://www.boredapi.com/api/activity';
+
+  // Random User API
+  static const String randomUserAPI = 'https://randomuser.me/api/';
 }

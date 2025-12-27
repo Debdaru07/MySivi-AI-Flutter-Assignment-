@@ -59,11 +59,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       floatingActionButton:
           tab == HomeTab.users
               ? FloatingActionButton(
-                onPressed: () {
-                  ref
-                      .read(usersProvider.notifier)
-                      .addUser('User ${users.length + 1}');
-
+                onPressed: () async {
+                  await ref.read(usersProvider.notifier).addRandomUser();
                   AppSnackBar.show(
                     context,
                     message: 'User added',
