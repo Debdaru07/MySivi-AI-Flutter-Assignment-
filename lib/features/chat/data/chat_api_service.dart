@@ -1,7 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/constants/api_constants.dart';
+
+final chatApiProvider = Provider<ChatApiService>((ref) {
+  return ChatApiService();
+});
 
 class ChatApiService {
   final _random = Random();

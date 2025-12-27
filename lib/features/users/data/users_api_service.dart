@@ -1,7 +1,12 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import '../models/user_model.dart';
+
+final usersApiProvider = Provider<UsersApiService>((ref) {
+  return UsersApiService();
+});
 
 class UsersApiService {
   final _uuid = const Uuid();
