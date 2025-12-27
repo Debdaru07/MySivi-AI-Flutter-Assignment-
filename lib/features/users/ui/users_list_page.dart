@@ -97,7 +97,7 @@ class _UserTile extends StatelessWidget {
         Navigator.pushNamed(
           context,
           ChatScreen.routeName,
-          arguments: {'user': user},
+          arguments: {'user': user, 'readOnly': false},
         );
       },
     );

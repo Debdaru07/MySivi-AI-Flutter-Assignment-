@@ -11,7 +11,11 @@ class AppRouter {
       case ChatScreen.routeName:
         final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => ChatScreen(user: args['user']),
+          builder:
+              (_) => ChatScreen(
+                user: args['user'],
+                readOnly: args['readOnly'] ?? false,
+              ),
         );
 
       default:

@@ -9,8 +9,8 @@ class ChatScreen extends ConsumerStatefulWidget {
   static const routeName = '/chat';
 
   final UserModel user;
-
-  const ChatScreen({super.key, required this.user});
+  final bool readOnly;
+  const ChatScreen({super.key, required this.user, this.readOnly = false});
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -61,43 +61,44 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       },
                     ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    decoration: const InputDecoration(
-                      hintText: 'Type a message',
-                      border: OutlineInputBorder(),
+          if (!widget.readOnly)
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _textController,
+                      decoration: const InputDecoration(
+                        hintText: 'Type a message',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(PhosphorIcons.paperPlaneTilt()),
-                  onPressed: () async {
-                    final text = _textController.text.trim();
-                    if (text.isEmpty) return;
+                  IconButton(
+                    icon: Icon(PhosphorIcons.paperPlaneTilt()),
+                    onPressed: () async {
+                      final text = _textController.text.trim();
+                      if (text.isEmpty) return;
 
-                    await ref
-                        .read(chatProvider.notifier)
-                        .sendMessage(widget.user, text);
+                      await ref
+                          .read(chatProvider.notifier)
+                          .sendMessage(widget.user, text);
 
-                    _textController.clear();
+                      _textController.clear();
 
-                    // ✅ Auto-scroll after rebuild
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (!_scrollController.hasClients) return;
-                      _scrollController.jumpTo(
-                        _scrollController.position.maxScrollExtent,
-                      );
-                    });
-                  },
-                ),
-              ],
+                      // ✅ Auto-scroll after rebuild
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!_scrollController.hasClients) return;
+                        _scrollController.jumpTo(
+                          _scrollController.position.maxScrollExtent,
+                        );
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

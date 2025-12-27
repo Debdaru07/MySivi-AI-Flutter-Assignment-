@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_utils.dart';
+import '../../chat/ui/chat_screen.dart';
 import '../../home/state/appbar_visibility_provider.dart';
 import '../state/chat_history_provider.dart';
 
@@ -107,6 +108,13 @@ class _ChatHistoryPageState extends ConsumerState<ChatHistoryPage>
               ),
             ],
           ),
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              ChatScreen.routeName,
+              arguments: {'user': chat.user, 'readOnly': true},
+            );
+          },
         );
       },
     );
