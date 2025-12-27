@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/chat_db_service.dart';
 import '../models/message_model.dart';
@@ -16,6 +17,12 @@ class ChatNotifier extends StateNotifier<Map<String, List<MessageModel>>> {
   ChatNotifier(this.db, this.api) : super({}) {
     _init();
   }
+
+  @visibleForTesting
+  ChatNotifier.test(Map<String, List<MessageModel>> initialState)
+    : db = throw UnimplementedError(),
+      api = throw UnimplementedError(),
+      super(initialState);
 
   Future<void> _init() async {
     await db.init();
