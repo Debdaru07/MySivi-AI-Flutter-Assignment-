@@ -9,6 +9,7 @@ import '../state/home_tab_provider.dart';
 import '../models/home_tab.dart';
 import '../../users/ui/users_list_page.dart';
 import '../../chat_history/ui/chat_history_page.dart';
+import '../../../core/widgets/app_snackbar.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   static const routeName = '/';
@@ -63,9 +64,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       .read(usersProvider.notifier)
                       .addUser('User ${users.length + 1}');
 
-                  ScaffoldMessenger.of(
+                  AppSnackBar.show(
                     context,
-                  ).showSnackBar(const SnackBar(content: Text('User added')));
+                    message: 'User added',
+                    icon: PhosphorIcons.userPlus(),
+                  );
                 },
                 child: Icon(PhosphorIcons.plus()),
               )
