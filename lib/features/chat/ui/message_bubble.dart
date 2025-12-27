@@ -3,6 +3,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../core/widgets/avatar_initial.dart';
 import '../models/message_model.dart';
+import '../../../core/widgets/typing_indicator.dart';
 
 class MessageBubble extends StatelessWidget {
   final MessageModel message;
@@ -10,6 +11,7 @@ class MessageBubble extends StatelessWidget {
   const MessageBubble({super.key, required this.message});
 
   bool get isSender => message.type == MessageType.sender;
+  bool get showTimestamp => message.status != MessageStatus.loading;
 
   @override
   Widget build(BuildContext context) {
@@ -57,11 +59,13 @@ class MessageBubble extends StatelessWidget {
                         : CrossAxisAlignment.start,
                 children: [
                   _buildMessageContent(textColor),
-                  const SizedBox(height: 4),
-                  Text(
-                    DateUtilsHelper.formatTime(message.timestamp),
-                    style: const TextStyle(fontSize: 10, color: Colors.grey),
-                  ),
+                  if (showTimestamp) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      DateUtilsHelper.formatTime(message.timestamp),
+                      style: const TextStyle(fontSize: 10, color: Colors.grey),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -79,10 +83,8 @@ class MessageBubble extends StatelessWidget {
   Widget _buildMessageContent(Color textColor) {
     switch (message.status) {
       case MessageStatus.loading:
-        return const SizedBox(
-          height: 16,
-          width: 16,
-          child: CircularProgressIndicator(strokeWidth: 2),
+        return TypingIndicator(
+          color: isSender ? Colors.white70 : AppColors.textSecondary,
         );
 
       case MessageStatus.error:
