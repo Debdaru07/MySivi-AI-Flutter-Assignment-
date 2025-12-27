@@ -66,17 +66,7 @@ class _ChatHistoryPageState extends ConsumerState<ChatHistoryPage>
             horizontal: 16,
             vertical: 8,
           ),
-          leading: CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.green.shade400,
-            child: Text(
-              chat.user.initial,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          leading: _UserAvatar(user: chat.user),
           title: Text(
             chat.user.name,
             style: const TextStyle(fontWeight: FontWeight.w600),
@@ -117,6 +107,57 @@ class _ChatHistoryPageState extends ConsumerState<ChatHistoryPage>
           },
         );
       },
+    );
+  }
+}
+
+class _UserAvatar extends StatelessWidget {
+  final dynamic user; // ChatHistoryModel.user (UserModel)
+
+  const _UserAvatar({required this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        _buildAvatar(),
+        if (user.isOnline == true)
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: AppColors.onlineGreen,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildAvatar() {
+    if (user.avatarUrl != null && user.avatarUrl!.isNotEmpty) {
+      return CircleAvatar(
+        radius: 22,
+        backgroundImage: NetworkImage(user.avatarUrl!),
+        backgroundColor: Colors.grey.shade200,
+      );
+    }
+
+    return CircleAvatar(
+      radius: 22,
+      backgroundColor: AppColors.primary,
+      child: Text(
+        user.initial,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 }

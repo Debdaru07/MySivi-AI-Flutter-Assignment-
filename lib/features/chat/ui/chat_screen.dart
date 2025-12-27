@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../users/models/user_model.dart';
 import '../state/chat_provider.dart';
 import 'message_bubble.dart';
@@ -35,7 +36,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.user.name),
+        title: Row(
+          children: [
+            _ChatAvatar(user: widget.user),
+            const SizedBox(width: 8),
+            Text(widget.user.name),
+          ],
+        ),
         leading: IconButton(
           icon: Icon(PhosphorIcons.caretLeft()),
           onPressed: () => Navigator.pop(context),
@@ -100,6 +107,36 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _ChatAvatar extends StatelessWidget {
+  final UserModel user;
+
+  const _ChatAvatar({required this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    if (user.avatarUrl != null && user.avatarUrl!.isNotEmpty) {
+      return CircleAvatar(
+        radius: 16,
+        backgroundImage: NetworkImage(user.avatarUrl!),
+        backgroundColor: Colors.grey.shade200,
+      );
+    }
+
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: AppColors.primary,
+      child: Text(
+        user.initial,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

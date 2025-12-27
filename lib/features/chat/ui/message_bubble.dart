@@ -63,7 +63,10 @@ class MessageBubble extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       DateUtilsHelper.formatTime(message.timestamp),
-                      style: const TextStyle(fontSize: 10, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isSender ? Colors.white70 : Colors.grey,
+                      ),
                     ),
                   ],
                 ],
