@@ -29,7 +29,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final messages = ref.watch(chatProvider);
+    final messages = ref.watch(
+      chatProvider.select((map) => map[widget.user.id] ?? []),
+    );
 
     return Scaffold(
       appBar: AppBar(

@@ -1,19 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../chat/state/chat_provider.dart';
 import '../models/chat_history_model.dart';
+import '../../chat/models/message_model.dart';
 
 final chatHistoryProvider = Provider<List<ChatHistoryModel>>((ref) {
-  final messages = ref.watch(chatProvider);
+  final chatMap = ref.watch(chatProvider);
 
-  final Map<String, ChatHistoryModel> historyMap = {};
+  final List<ChatHistoryModel> history = [];
 
-  for (final msg in messages) {
-    historyMap[msg.user.id] = ChatHistoryModel(
-      user: msg.user,
-      lastMessage: msg.text,
-      time: msg.timestamp,
+  chatMap.forEach((userId, messages) {
+    if (messages.isEmpty) return;
+
+    final MessageModel lastMessage = messages.last;
+
+    history.add(
+      ChatHistoryModel(
+        user: lastMessage.user,
+        lastMessage: lastMessage.text,
+        time: lastMessage.timestamp,
+      ),
     );
-  }
+  });
 
-  return historyMap.values.toList()..sort((a, b) => b.time.compareTo(a.time));
+  history.sort((a, b) => b.time.compareTo(a.time));
+  return history;
 });

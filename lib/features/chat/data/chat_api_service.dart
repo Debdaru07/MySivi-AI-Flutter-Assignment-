@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer' as console;
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import '../../../core/constants/api_constants.dart';
@@ -7,32 +6,43 @@ import '../../../core/constants/api_constants.dart';
 class ChatApiService {
   final _random = Random();
 
+  static const _fallbackMessages = [
+    'Sounds good!',
+    'Interesting 🤔',
+    'Got it 👍',
+    'Tell me more.',
+    'That makes sense.',
+    'Okay!',
+  ];
+
   Future<String> fetchMessage() async {
     try {
-      console.log('url - ${ApiConstants.comments}');
-
-      final res = await http.get(Uri.parse(ApiConstants.comments));
+      final res = await http
+          .get(Uri.parse(ApiConstants.comments))
+          .timeout(const Duration(seconds: 5));
 
       if (res.statusCode != 200) {
-        throw Exception('Network error');
+        throw Exception('Bad response');
       }
 
       final data = jsonDecode(res.body);
-      console.log('data - $data');
 
-      if (data is Map && data['comments'] is List) {
-        final List comments = data['comments'];
-
-        if (comments.isNotEmpty) {
-          final randomIndex = _random.nextInt(comments.length);
-          return comments[randomIndex]['body'] ?? '';
-        }
+      if (data is Map &&
+          data['comments'] is List &&
+          data['comments'].isNotEmpty) {
+        final comments = data['comments'] as List;
+        final randomIndex = _random.nextInt(comments.length);
+        return comments[randomIndex]['body'] ?? _randomFallback();
       }
-
-      throw Exception('Invalid API response');
-    } catch (exc) {
-      console.log('exception - $exc');
-      throw Exception('Invalid API response');
+    } catch (_) {
+      // 👇 Network / DNS / timeout / parsing fallback
+      return _randomFallback();
     }
+
+    return _randomFallback();
+  }
+
+  String _randomFallback() {
+    return _fallbackMessages[_random.nextInt(_fallbackMessages.length)];
   }
 }
